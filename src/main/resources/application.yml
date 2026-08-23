@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: ba2-assistant
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+info:
+  application:
+    name: BA2 AI Assistance Prototype
+    scope: fictional proof-of-concept only
