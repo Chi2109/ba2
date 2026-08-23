@@ -1,6 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="deploy&amp;run" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="C:\Users\Heimdall\Documents\GitHub\ba2\deploy-rescue-ai-poc.ps1" scriptParameters="-Server 172.28.8.164 -User sinmara -ZeroTierIp 172.28.8.164" executablePath="$PROJECT_DIR$/../../../../../Windows/System32/WindowsPowerShell/v1.0/powershell.exe">
-    <envs />
-    <method v="2" />
-  </configuration>
-</component>
