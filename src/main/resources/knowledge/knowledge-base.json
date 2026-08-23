@@ -1,0 +1,72 @@
+[
+  {
+    "id": "KB-CHEST-001",
+    "title": "Fictional chest discomfort assessment",
+    "text": "Fictional PoC guidance: treat chest discomfort together with associated symptoms as potentially time-sensitive. Use a structured assessment, observe for deterioration, and communicate significant changes to the responsible clinical level.",
+    "tags": [
+      "chest pain",
+      "chest pressure",
+      "chest discomfort",
+      "sweating",
+      "pale"
+    ],
+    "priority": "HIGH",
+    "requiredQualification": null
+  },
+  {
+    "id": "KB-BREATH-001",
+    "title": "Fictional breathing assessment",
+    "text": "Fictional PoC guidance: assess breathing in a structured way, note visible respiratory distress and relevant changes, and reassess when the patient's condition changes.",
+    "tags": [
+      "shortness of breath",
+      "breathing",
+      "respiratory distress",
+      "dyspnea"
+    ],
+    "priority": "HIGH",
+    "requiredQualification": null
+  },
+  {
+    "id": "KB-ABCDE-001",
+    "title": "Fictional structured primary assessment",
+    "text": "Fictional PoC guidance: use a consistent primary-assessment structure to identify immediately relevant problems before focusing on less urgent details. Reassess after meaningful changes.",
+    "tags": [
+      "abcde",
+      "airway",
+      "breathing",
+      "circulation",
+      "disability",
+      "exposure",
+      "primary assessment"
+    ],
+    "priority": "NORMAL",
+    "requiredQualification": null
+  },
+  {
+    "id": "KB-ESC-001",
+    "title": "Fictional deterioration and escalation rule",
+    "text": "Fictional PoC guidance: if the patient's condition appears severe, unstable, or is worsening, make the uncertainty and urgency explicit and escalate to the appropriate responsible clinical level.",
+    "tags": [
+      "high",
+      "urgent",
+      "worsening",
+      "deterioration",
+      "unstable"
+    ],
+    "priority": "HIGH",
+    "requiredQualification": null
+  },
+  {
+    "id": "KB-DOC-001",
+    "title": "Fictional reassessment and documentation reminder",
+    "text": "Fictional PoC guidance: record relevant observations and meaningful changes in the simulated case, and keep later reassessments distinguishable from the initial findings.",
+    "tags": [
+      "reassessment",
+      "documentation",
+      "notes",
+      "changes"
+    ],
+    "priority": "LOW",
+    "requiredQualification": null
+  }
+]
