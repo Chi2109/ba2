@@ -1,68 +1,153 @@
-# BA2 AI Assistance Prototype — Batch 1
+# Privacy-Aware Rescue Assistance PoC
 
-This is the first implementation milestone for the proof-of-concept described in the thesis.
+Minimal proof-of-concept backend for the bachelor thesis:
 
-## Scope of this batch
+**Concept and Prototype Implementation of a Privacy-Aware AI Assistance System for Emergency Medical Teams During Dispatches**
 
-This batch implements only:
+## Purpose
 
-1. Spring Boot backend skeleton
-2. `POST /api/v1/assistance`
-3. validation of the simplified dispatch request
-4. structured recommendation response
-5. health endpoint through Spring Boot Actuator
-6. a Dockerfile for the backend
+The prototype demonstrates a small, deterministic version of the proposed assistance pipeline:
 
-Retrieval and LLM integration are intentionally not included yet.
+1. receive simplified dispatch context;
+2. validate the request;
+3. retrieve relevant fictional knowledge;
+4. consider the fictional team qualification;
+5. return structured, prioritised and traceable recommendations.
+
+The prototype deliberately does **not** integrate a real language model. Its purpose is to demonstrate the surrounding architecture and processing flow with a minimal and explainable implementation.
+
+## Important limitations
+
+This software:
+
+- is not intended for real medical use;
+- contains fictional and simplified guidance only;
+- does not use real patient data;
+- does not use real Red Cross dispatch data;
+- does not use official internal Red Cross or RDmed content;
+- is not medically validated;
+- does not implement production authentication, HTTPS, persistent storage, audit logging or ESAPP integration.
 
 ## Requirements
 
 - Java 21
-- Maven 3.9+
-- Docker (optional for the first run)
+- Maven 3.9+ for local execution
+- Docker for container execution
 
 ## Run locally
 
+Run tests:
+
 ```bash
 mvn clean test
+```
+
+Start the backend:
+
+```bash
 mvn spring-boot:run
 ```
 
-The application starts on:
+The service listens on:
 
 ```text
 http://localhost:8080
 ```
 
-Health check:
+## Health check
+
+Request:
 
 ```text
-GET http://localhost:8080/actuator/health
+GET /health
 ```
 
-## Test the assistance endpoint
+Example:
 
-```bash
-curl -X POST http://localhost:8080/api/v1/assistance \
-  -H "Content-Type: application/json" \
-  -d '{
-    "dispatchType": "chest pain",
-    "urgency": "high",
-    "teamQualification": ["RS", "NFS"],
-    "symptoms": ["chest pressure", "shortness of breath"],
-    "notes": "patient is pale and sweating"
-  }'
+```powershell
+Invoke-RestMethod http://localhost:8080/health |
+    ConvertTo-Json
 ```
 
-Expected response shape:
+Response:
+
+```json
+{
+  "status": "UP"
+}
+```
+
+Spring Boot Actuator is also available at:
+
+```text
+GET /actuator/health
+```
+
+## Assistance endpoint
+
+Preferred minimal-PoC endpoint:
+
+```text
+POST /assist
+```
+
+The previous development endpoint remains available as an alias:
+
+```text
+POST /api/v1/assistance
+```
+
+### Example request
+
+```json
+{
+  "dispatchType": "chest pain",
+  "urgency": "high",
+  "teamQualification": ["RS", "NFS"],
+  "symptoms": [
+    "chest pressure",
+    "shortness of breath"
+  ],
+  "notes": "patient is pale and sweating"
+}
+```
+
+PowerShell:
+
+```powershell
+$body = @{
+    dispatchType = "chest pain"
+    urgency = "high"
+    teamQualification = @("RS", "NFS")
+    symptoms = @("chest pressure", "shortness of breath")
+    notes = "patient is pale and sweating"
+} | ConvertTo-Json
+
+$response = Invoke-RestMethod `
+    -Method Post `
+    -Uri "http://localhost:8080/assist" `
+    -ContentType "application/json" `
+    -Body $body
+
+$response | ConvertTo-Json -Depth 10
+```
+
+### Example output shape
 
 ```json
 {
   "recommendations": [
     {
+      "priority": "high",
+      "text": "Fictional PoC guidance: ...",
+      "source": "KB-ESC-001",
+      "requiredQualification": null,
+      "requiresEscalation": false
+    },
+    {
       "priority": "normal",
-      "text": "Prototype request accepted. Retrieval and AI generation will be added in the next implementation steps.",
-      "source": "prototype-backend",
+      "text": "Fictional PoC guidance: ...",
+      "source": "KB-ABCDE-001",
       "requiredQualification": null,
       "requiresEscalation": false
     }
@@ -70,17 +155,117 @@ Expected response shape:
 }
 ```
 
-## Build the Docker image
+The exact list depends on the deterministic retrieval score.
 
-First build the jar:
+## Fictional qualification model
 
-```bash
-mvn clean package
+The proof of concept uses only:
+
+```text
+RS  <  NFS
 ```
 
-Then:
+For the prototype, `NFS` satisfies an `RS` requirement, while `RS` does not satisfy an `NFS` requirement.
+
+This simplified model is not an authoritative description of Austrian EMS scope of practice.
+
+## Example qualification-boundary scenario
+
+```json
+{
+  "dispatchType": "qualification boundary",
+  "urgency": "high",
+  "teamQualification": ["RS"],
+  "symptoms": ["advanced intervention"],
+  "notes": "fictional scenario"
+}
+```
+
+The qualification-bound knowledge should be returned as an escalation instead of exposing its restricted fictional content.
+
+Expected fields include:
+
+```json
+{
+  "source": "KB-QUAL-001",
+  "requiredQualification": "NFS",
+  "requiresEscalation": true
+}
+```
+
+## Unknown-information scenario
+
+An unrelated request for which no knowledge entry matches returns a conservative fallback instead of inventing a recommendation.
+
+Example:
+
+```json
+{
+  "dispatchType": "equipment issue",
+  "urgency": "low",
+  "teamQualification": ["RS"],
+  "symptoms": ["broken tablet screen"],
+  "notes": "charging cable unavailable"
+}
+```
+
+The result uses:
+
+```text
+source = prototype-system
+requiresEscalation = true
+```
+
+## Docker
+
+Build from a clean project folder:
 
 ```bash
-docker build -t ba2-assistant:batch-1 .
-docker run --rm -p 8080:8080 ba2-assistant:batch-1
+docker build -t rescue-ai-poc .
 ```
+
+Run:
+
+```bash
+docker run --rm -p 8080:8080 rescue-ai-poc
+```
+
+Then test:
+
+```powershell
+Invoke-RestMethod http://localhost:8080/health |
+    ConvertTo-Json
+```
+
+And test `/assist` with the example request above.
+
+Stop the container and start it once more to confirm that the prototype has no hidden local runtime dependency.
+
+## Prototype scope
+
+Implemented:
+
+- simplified dispatch input;
+- request validation;
+- fictional knowledge base;
+- deterministic keyword/rule retrieval;
+- fictional qualification checks;
+- structured recommendations;
+- priorities;
+- traceable source IDs;
+- escalation flags;
+- safe no-match behaviour;
+- containerised backend.
+
+Intentionally not implemented:
+
+- real LLM integration;
+- real medical knowledge;
+- real operational data;
+- authentication;
+- HTTPS;
+- database;
+- full audit logging;
+- real offline functionality;
+- ESAPP integration;
+- Kubernetes.

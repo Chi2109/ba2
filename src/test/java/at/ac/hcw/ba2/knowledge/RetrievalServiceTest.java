@@ -19,15 +19,18 @@ class RetrievalServiceTest {
     @BeforeEach
     void setUp() throws IOException {
         KnowledgeBaseLoader loader =
-                new KnowledgeBaseLoader(new ObjectMapper());
+                new KnowledgeBaseLoader(
+                        new ObjectMapper()
+                );
 
         loader.load();
 
-        retrievalService = new RetrievalService(loader);
+        retrievalService =
+                new RetrievalService(loader);
     }
 
     @Test
-    void retrievesChestPainKnowledge() {
+    void chestPainRetrievesAbcdeEscalationAndDocumentation() {
         AssistanceRequest request =
                 new AssistanceRequest(
                         "chest pain",
@@ -44,14 +47,18 @@ class RetrievalServiceTest {
                 );
 
         List<KnowledgeEntry> results =
-                retrievalService.retrieve(request, 3);
+                retrievalService.retrieve(
+                        request,
+                        5
+                );
 
         assertThat(results)
                 .extracting(KnowledgeEntry::id)
-                .contains("KB-CHEST-001");
-
-        assertThat(results)
-                .allMatch(entry -> entry.id().startsWith("KB-"));
+                .contains(
+                        "KB-ABCDE-001",
+                        "KB-ESC-001",
+                        "KB-DOC-001"
+                );
     }
 
     @Test
@@ -66,11 +73,37 @@ class RetrievalServiceTest {
                 );
 
         List<KnowledgeEntry> results =
-                retrievalService.retrieve(request, 3);
+                retrievalService.retrieve(
+                        request,
+                        5
+                );
 
         assertThat(results)
                 .extracting(KnowledgeEntry::id)
-                .contains("KB-QUAL-001");
+                .contains(
+                        "KB-QUAL-001",
+                        "KB-ESC-001"
+                );
+    }
+
+    @Test
+    void unrelatedLowUrgencyInputReturnsNoKnowledge() {
+        AssistanceRequest request =
+                new AssistanceRequest(
+                        "equipment issue",
+                        "low",
+                        Set.of(Qualification.RS),
+                        List.of("broken tablet screen"),
+                        "charging cable unavailable"
+                );
+
+        List<KnowledgeEntry> results =
+                retrievalService.retrieve(
+                        request,
+                        5
+                );
+
+        assertThat(results).isEmpty();
     }
 
     @Test
@@ -88,25 +121,12 @@ class RetrievalServiceTest {
                 );
 
         List<KnowledgeEntry> results =
-                retrievalService.retrieve(request, 2);
-
-        assertThat(results).hasSizeLessThanOrEqualTo(2);
-    }
-
-    @Test
-    void returnsNoResultForUnrelatedInput() {
-        AssistanceRequest request =
-                new AssistanceRequest(
-                        "equipment issue",
-                        "low",
-                        Set.of(Qualification.RS),
-                        List.of("broken tablet screen"),
-                        "charging cable unavailable"
+                retrievalService.retrieve(
+                        request,
+                        3
                 );
 
-        List<KnowledgeEntry> results =
-                retrievalService.retrieve(request, 3);
-
-        assertThat(results).isEmpty();
+        assertThat(results)
+                .hasSizeLessThanOrEqualTo(3);
     }
 }

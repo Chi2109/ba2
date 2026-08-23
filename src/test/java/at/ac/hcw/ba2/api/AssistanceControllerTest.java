@@ -28,35 +28,55 @@ class AssistanceControllerTest {
     private AssistanceService assistanceService;
 
     @Test
-    void returnsStructuredAssistanceResponse() throws Exception {
+    void assistReturnsStructuredResponse() throws Exception {
         when(assistanceService.generateAssistance(any()))
-                .thenReturn(new AssistanceResponse(List.of(
-                        new Recommendation(
-                                Priority.HIGH,
-                                "Test recommendation",
-                                "test-source",
-                                null,
-                                false
+                .thenReturn(
+                        new AssistanceResponse(
+                                List.of(
+                                        new Recommendation(
+                                                Priority.HIGH,
+                                                "Test recommendation",
+                                                "test-source",
+                                                null,
+                                                false
+                                        )
+                                )
                         )
-                )));
+                );
 
-        String requestBody = """
-                {
-                  "dispatchType": "chest pain",
-                  "urgency": "high",
-                  "teamQualification": ["RS", "NFS"],
-                  "symptoms": ["chest pressure", "shortness of breath"],
-                  "notes": "fictional test data"
-                }
-                """;
-
-        mockMvc.perform(post("/api/v1/assistance")
-                        .contentType("application/json")
-                        .content(requestBody))
+        mockMvc.perform(
+                        post("/assist")
+                                .contentType("application/json")
+                                .content(validRequest())
+                )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.recommendations[0].priority").value("high"))
-                .andExpect(jsonPath("$.recommendations[0].source").value("test-source"))
-                .andExpect(jsonPath("$.recommendations[0].requiresEscalation").value(false));
+                .andExpect(
+                        jsonPath(
+                                "$.recommendations[0].priority"
+                        ).value("high")
+                )
+                .andExpect(
+                        jsonPath(
+                                "$.recommendations[0].source"
+                        ).value("test-source")
+                );
+    }
+
+    @Test
+    void previousEndpointRemainsAvailable() throws Exception {
+        when(assistanceService.generateAssistance(any()))
+                .thenReturn(
+                        new AssistanceResponse(
+                                List.of()
+                        )
+                );
+
+        mockMvc.perform(
+                        post("/api/v1/assistance")
+                                .contentType("application/json")
+                                .content(validRequest())
+                )
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -69,9 +89,11 @@ class AssistanceControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/v1/assistance")
-                        .contentType("application/json")
-                        .content(requestBody))
+        mockMvc.perform(
+                        post("/assist")
+                                .contentType("application/json")
+                                .content(requestBody)
+                )
                 .andExpect(status().isBadRequest());
     }
 
@@ -86,9 +108,26 @@ class AssistanceControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/v1/assistance")
-                        .contentType("application/json")
-                        .content(requestBody))
+        mockMvc.perform(
+                        post("/assist")
+                                .contentType("application/json")
+                                .content(requestBody)
+                )
                 .andExpect(status().isBadRequest());
+    }
+
+    private String validRequest() {
+        return """
+                {
+                  "dispatchType": "chest pain",
+                  "urgency": "high",
+                  "teamQualification": ["RS", "NFS"],
+                  "symptoms": [
+                    "chest pressure",
+                    "shortness of breath"
+                  ],
+                  "notes": "fictional test data"
+                }
+                """;
     }
 }

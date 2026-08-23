@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class AssistanceService {
 
-    private static final int MAX_RETRIEVED_ENTRIES = 3;
+    private static final int MAX_RETRIEVED_ENTRIES = 5;
 
     private final RetrievalService retrievalService;
     private final QualificationService qualificationService;
@@ -54,7 +54,10 @@ public class AssistanceService {
         List<Recommendation> recommendations =
                 retrievedEntries.stream()
                         .map(entry ->
-                                toRecommendation(entry, request))
+                                toRecommendation(
+                                        entry,
+                                        request
+                                ))
                         .toList();
 
         return new AssistanceResponse(recommendations);
@@ -76,7 +79,9 @@ public class AssistanceService {
         if (!qualified) {
             return new Recommendation(
                     entry.priority(),
-                    buildEscalationText(requiredQualification),
+                    buildEscalationText(
+                            requiredQualification
+                    ),
                     entry.id(),
                     requiredQualification.jsonValue(),
                     true
