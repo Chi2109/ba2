@@ -2,6 +2,8 @@ package at.ac.hcw.ba2.service;
 
 import at.ac.hcw.ba2.api.dto.AssistanceRequest;
 import at.ac.hcw.ba2.api.dto.AssistanceResponse;
+import at.ac.hcw.ba2.api.dto.Recommendation;
+import at.ac.hcw.ba2.domain.Qualification;
 import at.ac.hcw.ba2.knowledge.KnowledgeBaseLoader;
 import at.ac.hcw.ba2.knowledge.RetrievalService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +29,8 @@ class AssistanceServiceTest {
 
         assistanceService =
                 new AssistanceService(
-                        new RetrievalService(loader)
+                        new RetrievalService(loader),
+                        new QualificationService()
                 );
     }
 
@@ -37,7 +40,10 @@ class AssistanceServiceTest {
                 new AssistanceRequest(
                         "chest pain",
                         "high",
-                        Set.of("RS", "NFS"),
+                        Set.of(
+                                Qualification.RS,
+                                Qualification.NFS
+                        ),
                         List.of(
                                 "chest pressure",
                                 "shortness of breath"
@@ -58,12 +64,81 @@ class AssistanceServiceTest {
     }
 
     @Test
+    void hidesRestrictedTextAndRequiresEscalationWhenQualificationIsMissing() {
+        AssistanceRequest request =
+                new AssistanceRequest(
+                        "qualification boundary",
+                        "high",
+                        Set.of(Qualification.RS),
+                        List.of("advanced intervention"),
+                        "fictional scenario"
+                );
+
+        AssistanceResponse response =
+                assistanceService.generateAssistance(request);
+
+        Recommendation recommendation =
+                response.recommendations()
+                        .stream()
+                        .filter(item ->
+                                item.source()
+                                        .equals("KB-QUAL-001"))
+                        .findFirst()
+                        .orElseThrow();
+
+        assertThat(recommendation.requiredQualification())
+                .isEqualTo("NFS");
+
+        assertThat(recommendation.requiresEscalation())
+                .isTrue();
+
+        assertThat(recommendation.text())
+                .contains("does not meet that requirement")
+                .doesNotContain(
+                        "this simulated advanced intervention may only be considered"
+                );
+    }
+
+    @Test
+    void exposesQualifiedEntryWhenQualificationIsPresent() {
+        AssistanceRequest request =
+                new AssistanceRequest(
+                        "qualification boundary",
+                        "high",
+                        Set.of(Qualification.NFS),
+                        List.of("advanced intervention"),
+                        "fictional scenario"
+                );
+
+        AssistanceResponse response =
+                assistanceService.generateAssistance(request);
+
+        Recommendation recommendation =
+                response.recommendations()
+                        .stream()
+                        .filter(item ->
+                                item.source()
+                                        .equals("KB-QUAL-001"))
+                        .findFirst()
+                        .orElseThrow();
+
+        assertThat(recommendation.requiredQualification())
+                .isEqualTo("NFS");
+
+        assertThat(recommendation.requiresEscalation())
+                .isFalse();
+
+        assertThat(recommendation.text())
+                .contains("simulated advanced intervention");
+    }
+
+    @Test
     void returnsSafeFallbackWhenNothingMatches() {
         AssistanceRequest request =
                 new AssistanceRequest(
                         "equipment issue",
                         "low",
-                        Set.of("RS"),
+                        Set.of(Qualification.RS),
                         List.of("broken tablet screen"),
                         "charging cable unavailable"
                 );

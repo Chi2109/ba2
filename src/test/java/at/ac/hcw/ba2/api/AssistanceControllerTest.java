@@ -74,4 +74,21 @@ class AssistanceControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void rejectsUnknownQualification() throws Exception {
+        String requestBody = """
+                {
+                  "dispatchType": "test",
+                  "urgency": "low",
+                  "teamQualification": ["DOCTOR"],
+                  "symptoms": ["test"]
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/assistance")
+                        .contentType("application/json")
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+    }
 }

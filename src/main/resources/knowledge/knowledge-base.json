@@ -68,5 +68,18 @@
     ],
     "priority": "LOW",
     "requiredQualification": null
+  },
+  {
+    "id": "KB-QUAL-001",
+    "title": "Fictional qualification-bound intervention",
+    "text": "Fictional PoC guidance: this simulated advanced intervention may only be considered by personnel holding the NFS qualification in the prototype qualification model.",
+    "tags": [
+      "qualification boundary",
+      "advanced intervention",
+      "nfs measure",
+      "qualification required"
+    ],
+    "priority": "HIGH",
+    "requiredQualification": "NFS"
   }
 ]

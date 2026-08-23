@@ -1,6 +1,7 @@
 package at.ac.hcw.ba2.knowledge;
 
 import at.ac.hcw.ba2.api.dto.AssistanceRequest;
+import at.ac.hcw.ba2.domain.Qualification;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,10 @@ class RetrievalServiceTest {
                 new AssistanceRequest(
                         "chest pain",
                         "high",
-                        Set.of("RS", "NFS"),
+                        Set.of(
+                                Qualification.RS,
+                                Qualification.NFS
+                        ),
                         List.of(
                                 "chest pressure",
                                 "shortness of breath"
@@ -51,12 +55,31 @@ class RetrievalServiceTest {
     }
 
     @Test
+    void retrievesQualificationBoundEntry() {
+        AssistanceRequest request =
+                new AssistanceRequest(
+                        "qualification boundary",
+                        "high",
+                        Set.of(Qualification.RS),
+                        List.of("advanced intervention"),
+                        "fictional scenario"
+                );
+
+        List<KnowledgeEntry> results =
+                retrievalService.retrieve(request, 3);
+
+        assertThat(results)
+                .extracting(KnowledgeEntry::id)
+                .contains("KB-QUAL-001");
+    }
+
+    @Test
     void respectsRequestedResultLimit() {
         AssistanceRequest request =
                 new AssistanceRequest(
                         "chest pain",
                         "high",
-                        Set.of("RS"),
+                        Set.of(Qualification.RS),
                         List.of(
                                 "chest pressure",
                                 "shortness of breath"
@@ -76,7 +99,7 @@ class RetrievalServiceTest {
                 new AssistanceRequest(
                         "equipment issue",
                         "low",
-                        Set.of("RS"),
+                        Set.of(Qualification.RS),
                         List.of("broken tablet screen"),
                         "charging cable unavailable"
                 );

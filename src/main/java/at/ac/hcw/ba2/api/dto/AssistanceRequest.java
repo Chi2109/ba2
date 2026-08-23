@@ -1,5 +1,6 @@
 package at.ac.hcw.ba2.api.dto;
 
+import at.ac.hcw.ba2.domain.Qualification;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ public record AssistanceRequest(
         String urgency,
 
         @NotEmpty
-        Set<@NotBlank @Size(max = 20) String> teamQualification,
+        Set<@NotNull Qualification> teamQualification,
 
         @NotNull
         @Size(max = 20)
