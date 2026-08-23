@@ -16,13 +16,10 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://172.28.8.164:8080/health",
+          "raw": "http://{{baseUrl}}:8080/health",
           "protocol": "http",
           "host": [
-            "172",
-            "28",
-            "8",
-            "164"
+            "{{baseUrl}}"
           ],
           "port": "8080",
           "path": [
@@ -50,13 +47,10 @@
           }
         },
         "url": {
-          "raw": "http://172.28.8.164:8080/assist",
+          "raw": "http://{{baseUrl}}:8080/assist",
           "protocol": "http",
           "host": [
-            "172",
-            "28",
-            "8",
-            "164"
+            "{{baseUrl}}"
           ],
           "port": "8080",
           "path": [
@@ -84,13 +78,10 @@
           }
         },
         "url": {
-          "raw": "http://172.28.8.164:8080/assist",
+          "raw": "http://{{baseUrl}}:8080/assist",
           "protocol": "http",
           "host": [
-            "172",
-            "28",
-            "8",
-            "164"
+            "{{baseUrl}}"
           ],
           "port": "8080",
           "path": [
@@ -118,13 +109,10 @@
           }
         },
         "url": {
-          "raw": "http://172.28.8.164:8080/assist",
+          "raw": "http://{{baseUrl}}:8080/assist",
           "protocol": "http",
           "host": [
-            "172",
-            "28",
-            "8",
-            "164"
+            "{{baseUrl}}"
           ],
           "port": "8080",
           "path": [
@@ -152,13 +140,10 @@
           }
         },
         "url": {
-          "raw": "http://172.28.8.164:8080/assist",
+          "raw": "http://{{baseUrl}}:8080/assist",
           "protocol": "http",
           "host": [
-            "172",
-            "28",
-            "8",
-            "164"
+            "{{baseUrl}}"
           ],
           "port": "8080",
           "path": [
@@ -186,13 +171,10 @@
           }
         },
         "url": {
-          "raw": "http://172.28.8.164:8080/assist",
+          "raw": "http://{{baseUrl}}:8080/assist",
           "protocol": "http",
           "host": [
-            "172",
-            "28",
-            "8",
-            "164"
+            "{{baseUrl}}"
           ],
           "port": "8080",
           "path": [
@@ -201,6 +183,36 @@
         }
       },
       "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
     }
   ]
 }
