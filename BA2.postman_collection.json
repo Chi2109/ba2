@@ -1,0 +1,206 @@
+{
+  "info": {
+    "_postman_id": "31e135c8-be19-4ad3-8dfe-f3d257c35700",
+    "name": "BA2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50666522",
+    "_collection_link": "https://go.postman.co/collection/50666522-31e135c8-be19-4ad3-8dfe-f3d257c35700?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://172.28.8.164:8080/health",
+          "protocol": "http",
+          "host": [
+            "172",
+            "28",
+            "8",
+            "164"
+          ],
+          "port": "8080",
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Scenario 1 - Chest Pain",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"dispatchType\": \"chest pain\",\r\n  \"urgency\": \"high\",\r\n  \"teamQualification\": [\"RS\", \"NFS\"],\r\n  \"symptoms\": [\r\n    \"chest pressure\",\r\n    \"shortness of breath\"\r\n  ],\r\n  \"notes\": \"patient is pale and sweating\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://172.28.8.164:8080/assist",
+          "protocol": "http",
+          "host": [
+            "172",
+            "28",
+            "8",
+            "164"
+          ],
+          "port": "8080",
+          "path": [
+            "assist"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Scenario 2 - Qualification boundary, insufficient qualification",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"dispatchType\": \"qualification boundary\",\r\n  \"urgency\": \"high\",\r\n  \"teamQualification\": [\"RS\"],\r\n  \"symptoms\": [\r\n    \"advanced intervention\"\r\n  ],\r\n  \"notes\": \"fictional qualification-boundary scenario\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://172.28.8.164:8080/assist",
+          "protocol": "http",
+          "host": [
+            "172",
+            "28",
+            "8",
+            "164"
+          ],
+          "port": "8080",
+          "path": [
+            "assist"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Scenario 3 - Qualification control test",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"dispatchType\": \"qualification boundary\",\r\n  \"urgency\": \"high\",\r\n  \"teamQualification\": [\"NFS\"],\r\n  \"symptoms\": [\r\n    \"advanced intervention\"\r\n  ],\r\n  \"notes\": \"fictional qualification-boundary scenario\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://172.28.8.164:8080/assist",
+          "protocol": "http",
+          "host": [
+            "172",
+            "28",
+            "8",
+            "164"
+          ],
+          "port": "8080",
+          "path": [
+            "assist"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Scenario 4 - Limited / unknown information",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"dispatchType\": \"equipment issue\",\r\n  \"urgency\": \"low\",\r\n  \"teamQualification\": [\"RS\"],\r\n  \"symptoms\": [\r\n    \"broken tablet screen\"\r\n  ],\r\n  \"notes\": \"charging cable unavailable\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://172.28.8.164:8080/assist",
+          "protocol": "http",
+          "host": [
+            "172",
+            "28",
+            "8",
+            "164"
+          ],
+          "port": "8080",
+          "path": [
+            "assist"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Scenario 5 - Missing required field",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"urgency\": \"high\",\r\n  \"teamQualification\": [\"RS\"],\r\n  \"symptoms\": [\r\n    \"chest pressure\"\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://172.28.8.164:8080/assist",
+          "protocol": "http",
+          "host": [
+            "172",
+            "28",
+            "8",
+            "164"
+          ],
+          "port": "8080",
+          "path": [
+            "assist"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
